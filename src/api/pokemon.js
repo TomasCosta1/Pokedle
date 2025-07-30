@@ -71,9 +71,11 @@ export const getPokemonData = async (name) => {
     const res3 = await fetch(evoChainURL);
     const data3 = await res3.json();
     const evoChain = processEvolutionChain(data3.chain);
-    let evoStage =
-      evoChain.find((pokemon) => pokemon.name === pokeName)?.hierarchy || 0;
+    
+    const originalName = data1.name;
+    let evoStage = evoChain.find((pokemon) => pokemon.name === originalName)?.hierarchy || 0;
     evoStage++;
+    
 
     return {
       name: pokeName,
