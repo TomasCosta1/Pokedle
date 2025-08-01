@@ -35,53 +35,19 @@ const GameTable = ({ guesses, maxGuesses }) => {
   );
 
   return (
-    <ScrollView 
-      style={styles.tableContainer} 
-      vertical={true} 
-      showsVerticalScrollIndicator={true}
-      nestedScrollEnabled={true}
-    >
-      <ScrollView 
-        horizontal={true} 
-        showsHorizontalScrollIndicator={true}
-        nestedScrollEnabled={true}
-      >
+    <ScrollView style={styles.tableContainer} showsVerticalScrollIndicator={false}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={styles.tableContent}>
           <View style={styles.tableHeader}>
-            <View style={styles.headerCell}>
-              <Text style={styles.headerText}>Pokémon</Text>
-            </View>
-            <View style={styles.headerCell}>
-              <Text style={styles.headerText}>Tipo 1</Text>
-            </View>
-            <View style={styles.headerCell}>
-              <Text style={styles.headerText}>Tipo 2</Text>
-            </View>
-            <View style={styles.headerCell}>
-              <Text style={styles.headerText}>Hábitat</Text>
-            </View>
-            <View style={styles.headerCell}>
-              <Text style={styles.headerText}>Color</Text>
-            </View>
-            <View style={styles.headerCell}>
-              <Text style={styles.headerText}>Generación</Text>
-            </View>
-            <View style={styles.headerCell}>
-              <Text style={styles.headerText}>Evolución</Text>
-            </View>
-            <View style={styles.headerCell}>
-              <Text style={styles.headerText}>Altura</Text>
-            </View>
-            <View style={styles.headerCell}>
-              <Text style={styles.headerText}>Peso</Text>
-            </View>
+            {['Pokémon', 'Tipo 1', 'Tipo 2', 'Hábitat', 'Color', 'Generación', 'Evolución', 'Altura', 'Peso'].map((header, index) => (
+              <View key={index} style={styles.headerCell}>
+                <Text style={styles.headerText}>{header}</Text>
+              </View>
+            ))}
           </View>
 
           {guesses.map((guess, index) => renderGuessRow(guess, index))}
-
-          {Array.from({ length: maxGuesses - guesses.length }).map((_, index) => 
-            renderEmptyRow(index)
-          )}
+          {Array.from({ length: maxGuesses - guesses.length }).map((_, index) => renderEmptyRow(index))}
         </View>
       </ScrollView>
     </ScrollView>
@@ -91,57 +57,64 @@ const GameTable = ({ guesses, maxGuesses }) => {
 const styles = StyleSheet.create({
   tableContainer: {
     flex: 1,
-    zIndex: 1,
   },
   tableContent: {
     paddingHorizontal: 20,
     minWidth: 900,
-    minHeight: 600,
   },
   tableHeader: {
     flexDirection: 'row',
-    backgroundColor: '#333',
-    borderRadius: 5,
+    backgroundColor: '#f2f2f2',
+    borderRadius: 12,
     marginBottom: 10,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
   headerCell: {
     width: 100,
-    padding: 4,
+    paddingVertical: 10,
     borderRightWidth: 1,
-    borderRightColor: '#555',
+    borderRightColor: '#ddd',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 12,
+    color: '#555',
+    fontWeight: '600',
+    fontSize: 14,
     textAlign: 'center',
   },
   tableRow: {
     flexDirection: 'row',
-    marginBottom: 5,
-    borderRadius: 5,
-    overflow: 'hidden',
+    marginBottom: 6,
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
   },
   cell: {
     width: 100,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#eee',
     justifyContent: 'center',
     alignItems: 'center',
     aspectRatio: 1,
-    minHeight: 20,
   },
   pokemonSprite: {
-    width: 80,
-    height: 80,
+    width: 60,
+    height: 60,
   },
   emptyCell: {
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#fafafa',
   },
   emptyCellText: {
-    color: '#999',
-    fontSize: 16,
+    color: '#bbb',
+    fontSize: 18,
   },
 });
 
-export default GameTable; 
+export default GameTable;

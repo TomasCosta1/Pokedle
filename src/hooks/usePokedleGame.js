@@ -9,7 +9,7 @@ export const usePokedleGame = (getPokemonData) => {
   const [guesses, setGuesses] = useState([]);
   const [currentGuess, setCurrentGuess] = useState("");
   const [loading, setLoading] = useState(false);
-  const [gameWon, setGameWon] = useState(false);
+  const [gameResult, setGameResult] = useState(null); // null, 'win', 'lose'
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [allPokemon, setAllPokemon] = useState([]);
@@ -46,7 +46,7 @@ export const usePokedleGame = (getPokemonData) => {
 
   // Manejar adivinanza
   const handleGuess = async () => {
-    if (!currentGuess.trim() || loading || gameWon) return;
+    if (!currentGuess.trim() || loading || gameResult === 'win') return;
 
     setLoading(true);
     try {
@@ -66,10 +66,9 @@ export const usePokedleGame = (getPokemonData) => {
 
       // Verificar si ganó
       if (guessData.name === hiddenPokemon.name) {
-        setGameWon(true);
-        Alert.alert("¡Felicidades!", `¡Adivinaste! El Pokémon era ${hiddenPokemon.name}`);
+        setGameResult('win');
       } else if (guesses.length + 1 >= GAME_CONSTANTS.MAX_GUESSES) {
-        Alert.alert("Game Over", `Se acabaron los intentos. El Pokémon era ${hiddenPokemon.name}`);
+        setGameResult('lose');
       }
     } catch (error) {
       Alert.alert("Error", "Pokémon no encontrado. Intenta con otro nombre.");
@@ -82,7 +81,7 @@ export const usePokedleGame = (getPokemonData) => {
   const resetGame = () => {
     setGuesses([]);
     setCurrentGuess("");
-    setGameWon(false);
+    setGameResult(null);
     setSuggestions([]);
     setShowSuggestions(false);
     initializeGame();
@@ -97,7 +96,7 @@ export const usePokedleGame = (getPokemonData) => {
     guesses,
     currentGuess,
     loading,
-    gameWon,
+    gameResult,
     suggestions,
     showSuggestions,
     allPokemon,
@@ -107,4 +106,4 @@ export const usePokedleGame = (getPokemonData) => {
     handleGuess,
     resetGame,
   };
-}; 
+};

@@ -1,10 +1,13 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const GameHeader = ({ onResetGame }) => {
+const GameHeader = ({ onResetGame, onGoHome }) => {
   return (
     <View style={styles.header}>
-      <Text style={styles.title}>Pokedle</Text>
+      <TouchableOpacity onPress={onGoHome}>
+        <Text style={styles.title}>Pokedle</Text>
+      </TouchableOpacity>
+      
       <TouchableOpacity style={styles.resetButton} onPress={onResetGame}>
         <Text style={styles.resetButtonText}>Nuevo Juego</Text>
       </TouchableOpacity>
@@ -37,4 +40,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GameHeader; 
+export default GameHeader;

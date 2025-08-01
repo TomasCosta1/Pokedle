@@ -18,18 +18,18 @@ const AttributeCell = ({ value, comparison, isNumeric = false }) => {
       break;
     case 'red-up':
       backgroundColor = COMPARISON_COLORS.RED;
-      arrow = ' ↑';
+      arrow = '↑';
       break;
     case 'red-down':
       backgroundColor = COMPARISON_COLORS.RED;
-      arrow = ' ↓';
+      arrow = '↓';
       break;
   }
 
   return (
     <View style={[styles.cell, { backgroundColor }]}>
       <Text style={styles.cellText}>
-        {value || 'Ninguno'}{arrow}
+        {value || 'Ninguno'} <Text style={styles.arrow}>{arrow}</Text>
       </Text>
     </View>
   );
@@ -39,17 +39,21 @@ const styles = StyleSheet.create({
   cell: {
     width: 100,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#eee',
     justifyContent: 'center',
     alignItems: 'center',
     aspectRatio: 1,
-    minHeight: 20,
   },
   cellText: {
-    fontSize: 18,
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
     textAlign: 'center',
-    fontWeight: '500',
+  },
+  arrow: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 
-export default AttributeCell; 
+export default AttributeCell;

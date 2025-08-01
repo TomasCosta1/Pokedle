@@ -1,5 +1,6 @@
+import React, { useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
-import { View, Text } from "react-native";
+import { View, Text, Alert } from "react-native";
 import { getPokemonData } from "./src/api/pokemon";
 import { usePokedleGame } from "./src/hooks/usePokedleGame";
 import { GAME_CONSTANTS } from "./src/constants/gameConstants";
@@ -7,14 +8,17 @@ import { globalStyles } from "./src/styles/globalStyles";
 import GameHeader from "./src/components/GameHeader";
 import GuessInput from "./src/components/GuessInput";
 import GameTable from "./src/components/GameTable";
+import HomeScreen from "./src/components/Home";
 
 export default function App() {
+  const [gameMode, setGameMode] = useState(null); // null, 'classic' o 'gritos'
+
   const {
     hiddenPokemon,
     guesses,
     currentGuess,
     loading,
-    gameWon,
+    gameResult,   // <-- Acá uso gameResult
     suggestions,
     showSuggestions,
     handleInputChange,
@@ -22,6 +26,28 @@ export default function App() {
     handleGuess,
     resetGame,
   } = usePokedleGame(getPokemonData);
+
+  useEffect(() => {
+    if (gameResult === 'win') {
+      Alert.alert(
+        "¡Excelente!",
+        "Has acertado el Pokémon",
+        [{ text: "Aceptar", onPress: () => setGameMode(null) }],
+        { cancelable: false }
+      );
+    } else if (gameResult === 'lose') {
+      Alert.alert(
+        "Game Over",
+        `Se acabaron los intentos. El Pokémon era ${hiddenPokemon?.name || ''}`,
+        [{ text: "Aceptar", onPress: () => setGameMode(null) }],
+        { cancelable: false }
+      );
+    }
+  }, [gameResult, hiddenPokemon]);
+
+  if (!gameMode) {
+    return <HomeScreen onSelectMode={(mode) => setGameMode(mode)} />;
+  }
 
   if (!hiddenPokemon) {
     return (
@@ -35,7 +61,14 @@ export default function App() {
     <View style={globalStyles.container}>
       <StatusBar style="auto" />
       
-      <GameHeader onResetGame={resetGame} />
+      <GameHeader 
+        onResetGame={resetGame} 
+        onGoHome={() => setGameMode(null)}
+      />
+
+      <Text style={{ fontSize: 18, fontWeight: 'bold', textAlign: 'center', marginVertical: 10 }}>
+        Modo de Juego: {gameMode === 'classic' ? 'Clásico' : 'Gritos'}
+      </Text>
 
       <GuessInput
         currentGuess={currentGuess}
@@ -43,7 +76,7 @@ export default function App() {
         onGuess={handleGuess}
         onSelectSuggestion={selectSuggestion}
         loading={loading}
-        gameWon={gameWon}
+        gameWon={gameResult === 'win'}
         guesses={guesses}
         maxGuesses={GAME_CONSTANTS.MAX_GUESSES}
         suggestions={suggestions}
