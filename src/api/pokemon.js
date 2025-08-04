@@ -65,6 +65,7 @@ export const getPokemonData = async (name) => {
     const habitat = data2.habitat?.name || null;
     const gen = generations[data2.generation.name];
     const color = data2.color.name;
+    const description = data2.flavor_text_entries[0].flavor_text
     const evoChainURL = data2.evolution_chain.url;
 
     // Tercera consulta al endpoint evolution-chain para ver en que etapa evolutiva se encuentra
@@ -87,6 +88,7 @@ export const getPokemonData = async (name) => {
       habitat,
       gen,
       color,
+      description,
       evoStage,
     };
   } catch (e) {

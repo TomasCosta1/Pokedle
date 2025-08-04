@@ -1,15 +1,20 @@
-import { useState, useEffect } from 'react';
-import { Alert } from 'react-native';
-import { GAME_CONSTANTS } from '../constants/gameConstants';
-import { compareAttributes } from '../utils/comparisonUtils';
-import { loadAllPokemon, generateHiddenPokemon, filterSuggestions, findPokemonByName } from '../utils/pokemonUtils';
+import { useState, useEffect } from "react";
+import { Alert } from "react-native";
+import { GAME_CONSTANTS } from "../constants/gameConstants";
+import { compareAttributes } from "../utils/comparisonUtils";
+import {
+  loadAllPokemon,
+  generateHiddenPokemon,
+  filterSuggestions,
+  findPokemonByName,
+} from "../utils/pokemonUtils";
 
-export const usePokedleGame = (getPokemonData) => {
+export const usePokedleGame = (getPokemonData, gameMode = null) => {
   const [hiddenPokemon, setHiddenPokemon] = useState(null);
   const [guesses, setGuesses] = useState([]);
   const [currentGuess, setCurrentGuess] = useState("");
   const [loading, setLoading] = useState(false);
-  const [gameResult, setGameResult] = useState(null); // null, 'win', 'lose'
+  const [gameResult, setGameResult] = useState(null);
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [allPokemon, setAllPokemon] = useState([]);
@@ -17,11 +22,12 @@ export const usePokedleGame = (getPokemonData) => {
   // Inicializar juego
   const initializeGame = async () => {
     try {
+      const isScreamsMode = gameMode === 'gritos';
       const [pokemonList, hiddenPokemonData] = await Promise.all([
         loadAllPokemon(),
-        generateHiddenPokemon(getPokemonData)
+        generateHiddenPokemon(getPokemonData, isScreamsMode),
       ]);
-      
+
       setAllPokemon(pokemonList);
       setHiddenPokemon(hiddenPokemonData);
     } catch (error) {
@@ -46,17 +52,19 @@ export const usePokedleGame = (getPokemonData) => {
 
   // Manejar adivinanza
   const handleGuess = async () => {
-    if (!currentGuess.trim() || loading || gameResult === 'win') return;
+    if (!currentGuess.trim() || loading || gameResult === "win") return;
 
     setLoading(true);
     try {
       const pokemonInList = findPokemonByName(currentGuess.trim(), allPokemon);
-      const pokemonName = pokemonInList ? pokemonInList.originalName : currentGuess.trim();
+      const pokemonName = pokemonInList
+        ? pokemonInList.originalName
+        : currentGuess.trim();
       const guessData = await getPokemonData(pokemonName.toLowerCase());
-      
+
       const newGuess = {
         ...guessData,
-        comparisons: compareAttributes(guessData, hiddenPokemon)
+        comparisons: compareAttributes(guessData, hiddenPokemon),
       };
 
       setGuesses([...guesses, newGuess]);
@@ -66,9 +74,9 @@ export const usePokedleGame = (getPokemonData) => {
 
       // Verificar si ganó
       if (guessData.name === hiddenPokemon.name) {
-        setGameResult('win');
+        setGameResult("win");
       } else if (guesses.length + 1 >= GAME_CONSTANTS.MAX_GUESSES) {
-        setGameResult('lose');
+        setGameResult("lose");
       }
     } catch (error) {
       Alert.alert("Error", "Pokémon no encontrado. Intenta con otro nombre.");
@@ -87,9 +95,22 @@ export const usePokedleGame = (getPokemonData) => {
     initializeGame();
   };
 
+  // Reinicio completo
+  const resetToHome = () => {
+    setGuesses([]);
+    setCurrentGuess("");
+    setGameResult(null);
+    setSuggestions([]);
+    setShowSuggestions(false);
+    setHiddenPokemon(null);
+    setAllPokemon([]);
+  };
+
   useEffect(() => {
-    initializeGame();
-  }, []);
+    if (gameMode && !hiddenPokemon) {
+      initializeGame();
+    }
+  }, [gameMode, hiddenPokemon]);
 
   return {
     hiddenPokemon,
@@ -100,10 +121,11 @@ export const usePokedleGame = (getPokemonData) => {
     suggestions,
     showSuggestions,
     allPokemon,
-    
+
     handleInputChange,
     selectSuggestion,
     handleGuess,
     resetGame,
+    resetToHome,
   };
 };

@@ -3,43 +3,47 @@ import { StatusBar } from "expo-status-bar";
 import { View, Text, Alert } from "react-native";
 import { getPokemonData } from "./src/api/pokemon";
 import { usePokedleGame } from "./src/hooks/usePokedleGame";
-import { GAME_CONSTANTS } from "./src/constants/gameConstants";
 import { globalStyles } from "./src/styles/globalStyles";
-import GameHeader from "./src/components/GameHeader";
-import GuessInput from "./src/components/GuessInput";
-import GameTable from "./src/components/GameTable";
 import HomeScreen from "./src/components/Home";
+import { Pokedle } from "./src/pages/Pokedle";
+import { Screams } from "./src/pages/Screams";
 
 export default function App() {
-  const [gameMode, setGameMode] = useState(null); // null, 'classic' o 'gritos'
+  const [gameMode, setGameMode] = useState(null);
+
+  const handleGoHome = () => {
+    resetToHome();
+    setGameMode(null);
+  };
 
   const {
     hiddenPokemon,
     guesses,
     currentGuess,
     loading,
-    gameResult,   // <-- Acá uso gameResult
+    gameResult,
     suggestions,
     showSuggestions,
     handleInputChange,
     selectSuggestion,
     handleGuess,
     resetGame,
-  } = usePokedleGame(getPokemonData);
+    resetToHome,
+  } = usePokedleGame(getPokemonData, gameMode);
 
   useEffect(() => {
-    if (gameResult === 'win') {
+    if (gameResult === "win") {
       Alert.alert(
         "¡Excelente!",
         "Has acertado el Pokémon",
-        [{ text: "Aceptar", onPress: () => setGameMode(null) }],
+        [{ text: "Aceptar", onPress: handleGoHome }],
         { cancelable: false }
       );
-    } else if (gameResult === 'lose') {
+    } else if (gameResult === "lose") {
       Alert.alert(
         "Game Over",
-        `Se acabaron los intentos. El Pokémon era ${hiddenPokemon?.name || ''}`,
-        [{ text: "Aceptar", onPress: () => setGameMode(null) }],
+        `Se acabaron los intentos. El Pokémon era ${hiddenPokemon?.name || ""}`,
+        [{ text: "Aceptar", onPress: handleGoHome }],
         { cancelable: false }
       );
     }
@@ -60,33 +64,39 @@ export default function App() {
   return (
     <View style={globalStyles.container}>
       <StatusBar style="auto" />
-      
-      <GameHeader 
-        onResetGame={resetGame} 
-        onGoHome={() => setGameMode(null)}
-      />
 
-      <Text style={{ fontSize: 18, fontWeight: 'bold', textAlign: 'center', marginVertical: 10 }}>
-        Modo de Juego: {gameMode === 'classic' ? 'Clásico' : 'Gritos'}
-      </Text>
-
-      <GuessInput
-        currentGuess={currentGuess}
-        onInputChange={handleInputChange}
-        onGuess={handleGuess}
-        onSelectSuggestion={selectSuggestion}
-        loading={loading}
-        gameWon={gameResult === 'win'}
-        guesses={guesses}
-        maxGuesses={GAME_CONSTANTS.MAX_GUESSES}
-        suggestions={suggestions}
-        showSuggestions={showSuggestions}
-      />
-
-      <GameTable 
-        guesses={guesses} 
-        maxGuesses={GAME_CONSTANTS.MAX_GUESSES} 
-      />
+      {gameMode === "classic" ? (
+        <Pokedle
+          resetGame={resetGame}
+          setGameMode={handleGoHome}
+          gameMode={gameMode}
+          currentGuess={currentGuess}
+          handleInputChange={handleInputChange}
+          handleGuess={handleGuess}
+          selectSuggestion={selectSuggestion}
+          loading={loading}
+          gameResult={gameResult}
+          guesses={guesses}
+          suggestions={suggestions}
+          showSuggestions={showSuggestions}
+        />
+      ) : (
+        <Screams
+          resetGame={resetGame}
+          setGameMode={handleGoHome}
+          gameMode={gameMode}
+          currentGuess={currentGuess}
+          handleInputChange={handleInputChange}
+          handleGuess={handleGuess}
+          selectSuggestion={selectSuggestion}
+          loading={loading}
+          gameResult={gameResult}
+          guesses={guesses}
+          suggestions={suggestions}
+          showSuggestions={showSuggestions}
+          hiddenPokemon={hiddenPokemon}
+        />
+      )}
     </View>
   );
 }

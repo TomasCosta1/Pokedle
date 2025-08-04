@@ -1,4 +1,4 @@
-import { COMPARISON_STATUS } from '../constants/gameConstants';
+import { COMPARISON_COLORS, COMPARISON_STATUS } from '../constants/gameConstants';
 
 // Funciones para verificar coincidencia de tipos
 export const checkType1Match = (guessType, targetType1, targetType2) => {
@@ -29,9 +29,16 @@ export const compareNumericValue = (guessValue, targetValue) => {
   return guessValue > targetValue ? COMPARISON_STATUS.LOWER : COMPARISON_STATUS.HIGHER;
 };
 
+// Funcion para verificar nombre
+export const compareName = (guessName, targetName) => {
+  if (guessName === targetName) return COMPARISON_STATUS.CORRECT;
+  return COMPARISON_STATUS.INCORRECT;
+}
+
 // Función principal para comparar atributos
 export const compareAttributes = (guess, target) => {
   return {
+    name: compareName(guess.name, target.name),
     type1: checkType1Match(guess.type1, target.type1, target.type2),
     type2: checkType2Match(guess.type2, target.type1, target.type2),
     habitat: guess.habitat === target.habitat ? COMPARISON_STATUS.CORRECT : COMPARISON_STATUS.INCORRECT,
