@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
 import { Audio } from "expo-av";
 import { ScreamTable } from "../components/ScreamTable";
@@ -23,6 +23,14 @@ export const Screams = ({
 }) => {
   const [showGenerationHint, setShowGenerationHint] = useState(false);
   const [showDescriptionHint, setShowDescriptionHint] = useState(false);
+
+  // Resetear pistas cuando se reinicia el juego
+  useEffect(() => {
+    if (guesses.length === 0) {
+      setShowGenerationHint(false);
+      setShowDescriptionHint(false);
+    }
+  }, [guesses.length]);
 
   const playPokemonSound = async () => {
     if (hiddenPokemon) {

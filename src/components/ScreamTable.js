@@ -46,21 +46,19 @@ export const ScreamTable = ({ guesses, maxGuesses }) => {
     
       return (
         <ScrollView style={styles.tableContainer} showsVerticalScrollIndicator={false}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <View style={styles.tableContent}>
-              <View style={styles.tableHeader}>
-                <View style={styles.headerCell}>
-                  <Text style={styles.headerText}>Pokémon</Text>
-                </View>
-                <View style={styles.headerNameCell}>
-                  <Text style={styles.headerText}>Nombre</Text>
-                </View>
+          <View style={styles.tableContent}>
+            <View style={styles.tableHeader}>
+              <View style={styles.headerCell}>
+                <Text style={styles.headerText}>Pokémon</Text>
               </View>
-    
-              {guesses.map((guess, index) => renderGuessRow(guess, index))}
-              {Array.from({ length: maxGuesses - guesses.length }).map((_, index) => renderEmptyRow(index))}
+              <View style={styles.headerNameCell}>
+                <Text style={styles.headerText}>Nombre</Text>
+              </View>
             </View>
-          </ScrollView>
+  
+            {guesses.map((guess, index) => renderGuessRow(guess, index))}
+            {Array.from({ length: maxGuesses - guesses.length }).map((_, index) => renderEmptyRow(index))}
+          </View>
         </ScrollView>
       );
     };
@@ -71,7 +69,8 @@ export const ScreamTable = ({ guesses, maxGuesses }) => {
       },
       tableContent: {
         paddingHorizontal: 20,
-        minWidth: 300,
+        width: '100%',
+        alignItems: 'center',
       },
       tableHeader: {
         flexDirection: 'row',
@@ -81,9 +80,11 @@ export const ScreamTable = ({ guesses, maxGuesses }) => {
         overflow: 'hidden',
         borderWidth: 1,
         borderColor: '#ddd',
+        width: '100%',
+        maxWidth: 400,
       },
       headerCell: {
-        width: 150,
+        width: 120,
         paddingVertical: 10,
         borderRightWidth: 1,
         borderRightColor: '#ddd',
@@ -114,9 +115,11 @@ export const ScreamTable = ({ guesses, maxGuesses }) => {
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.05,
         shadowRadius: 2,
+        width: '100%',
+        maxWidth: 400,
       },
       cell: {
-        width: 150,
+        width: 120,
         borderWidth: 1,
         borderColor: '#eee',
         justifyContent: 'center',
